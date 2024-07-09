@@ -1729,6 +1729,10 @@ function exportJSON(originalData) {
     a.click();
     document.body.removeChild(a);
 }
+function sig(vlain) {
+    let value = 1 / (1 + (Math.pow(Math.E, -vlain)))
+    return value
+}
 function main() {
 
 
@@ -1844,8 +1848,8 @@ function main() {
             for (let t = 0; t < net.structure[1].length; t++) {
                 for (let r = 0; r < net.structure[0].length; r++) {
                     for (let k = 0; k < pix1.data.length; k += 4) {
-                        box[Math.floor(k / 4)][0] -= mat2[w][r][Math.floor(k / 4)]
-                        box[Math.floor(k / 4)][1] += mat2[w][r][Math.floor(k / 4)]
+                        box[Math.floor(k / 4)][0] += mat2[w][r][Math.floor(k / 4)]
+                        box[Math.floor(k / 4)][1] -= mat2[w][r][Math.floor(k / 4)]
                         box[Math.floor(k / 4)][2] = 64
                         box[Math.floor(k / 4)][3] = 255
                     }

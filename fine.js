@@ -31,7 +31,7 @@ let images = []
 //     images.push(frame)
 // }
 
-// //////console.log(images)
+// console.log(images)
 let count = 0
 
 let randpoint = 0
@@ -201,7 +201,7 @@ const gamepadAPI = {
         }
         gamepadAPI.axesStatus = axes;// assign received values
         gamepadAPI.buttonsStatus = pressed;
-        // //////console.log(pressed); // return buttons for debugging purposes
+        // console.log(pressed); // return buttons for debugging purposes
         return pressed;
     },
     buttonPressed: function (button, hold) {
@@ -352,7 +352,7 @@ class LineOP {
         this.width = width
     }
     intersects(line) {
-        //////console.log(line)
+        console.log(line)
         var det, gm, lm;
         det = (this.target.x - this.object.x) * (line.target.y - line.object.y) - (line.target.x - line.object.x) * (this.target.y - this.object.y);
         if (det === 0) {
@@ -466,7 +466,7 @@ class Circle {
             canvas_context.fill()
             canvas_context.stroke();
         } else {
-            // //////console.log("The circle is below a radius of 0, and has not been drawn. The circle is:", this)
+            // console.log("The circle is below a radius of 0, and has not been drawn. The circle is:", this)
         }
     }
     move() {
@@ -1092,7 +1092,7 @@ function setUp(canvas_pass, style = "#000000") {
     }
 }
 function gamepad_control(object, speed = 1) { // basic control for objects using the controler
-    //         //////console.log(gamepadAPI.axesStatus[1]*gamepadAPI.axesStatus[0]) //debugging
+    //         console.log(gamepadAPI.axesStatus[1]*gamepadAPI.axesStatus[0]) //debugging
     if (typeof object.body != 'undefined') {
         if (typeof (gamepadAPI.axesStatus[1]) != 'undefined') {
             if (typeof (gamepadAPI.axesStatus[0]) != 'undefined') {
@@ -1423,19 +1423,19 @@ class Network {
     }
 
     becomeNetworkFrom(network) { //using a js file with one variable can be good for this
-        // //////console.log(this.structure[0][0].bias)
+        // console.log(this.structure[0][0].bias)
         for (let t = 0; t < this.structure.length; t++) {
-            // //////console.log("h1")
+            // console.log("h1")
             for (let k = 0; k < this.structure[t].length; k++) {
-                // //////console.log("h2")
+                // console.log("h2")
                 this.structure[t][k].bias = network.structure[t][k].bias //+((Math.random()-.5)/4)
                 for (let w = 0; w < this.structure[t][k].weights.length; w++) {
-                    // //////console.log("h3")
+                    // console.log("h3")
                     this.structure[t][k].weights[w].setWeight(network.structure[t][k][w].valueOf())// +((Math.random()-.5)/4))
                 }
             }
         }
-        // //////console.log(this.structure[0][0].bias)
+        // console.log(this.structure[0][0].bias)
     }
     log() {
         let json = {}
@@ -1451,7 +1451,7 @@ class Network {
                 }
             }
         }
-        //////console.log(json)
+        console.log(json)
         return json
     }
     calculateDeltasRELU(goals) {
@@ -1490,7 +1490,7 @@ class Network {
                 } else {
                     for (let w = 0; w < perceptron.outputConnections.length; w++) {
                         const currentConnection = perceptron.outputConnections[w]
-                        ////////console.log(currentConnection)
+                        //console.log(currentConnection)
                         error += currentConnection.to.delta * currentConnection.valueOf()
                     }
                 }
@@ -1516,7 +1516,7 @@ class Network {
                 } else {
                     for (let k = 0; k < perceptron.outputConnections.length; k++) {
                         const currentConnection = perceptron.outputConnections[k]
-                        ////////console.log(currentConnection)
+                        //console.log(currentConnection)
                         error += currentConnection.to.delta * currentConnection.valueOf()
                     }
                 }
@@ -1739,17 +1739,16 @@ function main() {
         pix1 = canvas_context.getImageData(0, 0, 28, 28)
 
         let mat1 = []
-        let boxsto1 = []
         for (let t = 0; t < net.structure[0].length; t++) {
             mat1.push([])
         }
 
-        //////console.log("Mats1")
+        console.log("Mats1")
         for (let t = 0; t < net.structure[0].length; t++) {
             let bias = net.structure[0][t].bias.valueOf();
             let minValue = Number.POSITIVE_INFINITY;
             let maxValue = Number.NEGATIVE_INFINITY;
-
+        
             // First pass: find min and max values after applying bias
             for (let k = 0; k < pix1.data.length; k += 4) {
                 let value = net.structure[0][t].weights[(Math.floor(k / 4))].valueOf() //+ bias;
@@ -1757,81 +1756,77 @@ function main() {
                 minValue = Math.min(minValue, value);
                 maxValue = Math.max(maxValue, value);
             }
-
+        
             // Calculate the range for normalization
             let range = maxValue - minValue;
-
-            let box = []
+        
             // Second pass: normalize and set pixel values
             for (let k = 0; k < pix1.data.length; k += 4) {
                 let value = net.structure[0][t].weights[(Math.floor(k / 4))].valueOf() //+ bias;
-
+                
                 // Normalize the value to [0, 1] range
-                let normalizedValue = (value) / range;
-
+                let normalizedValue = (value ) / range;
+        
                 // Set pixel values
                 pix1.data[k] = normalizedValue * 255;     // Red channel
                 pix1.data[k + 1] = -normalizedValue * 255// (- normalizedValue) * 255; // Green channel
-                pix1.data[k + 2] = 64;  // Blue channel (constant)
+                pix1.data[k + 2] =64;  // Blue channel (constant)
                 pix1.data[k + 3] = 255; // Alpha channel (opaque)
-
-                mat1[t][Math.floor(k / 4)] = normalizedValue;
-                box.push(normalizedValue)
+        
+                mat1[t][Math.floor(k / 4)] = value;
             }
-
+        
             canvas_context.putImageData(pix1, ((t % 16) * 34) + 5, 10 + Math.floor(t / 16) * 34);
-
+        
             // Add bias value text
             canvas_context.fillStyle = "white";
             canvas_context.font = "10px Arial";
             // canvas_context.fillText(bias.toFixed(2), ((t % 16) * 34) + 5, 40 + Math.floor(t / 16) * 34);
-            boxsto1.push(box)
         }
         // return
-        //////console.log("Vis1")
-        //                 //////console.log(mat1)
+        console.log("Vis1")
+        //                 console.log(mat1)
 
-        let boxsto2 = []
         let mat2 = []
         let sompmat2 = []
         for (let t = 0; t < net.structure[1].length; t++) {
             mat2.push([])
             sompmat2.push([])
-            for (let r = 0; r < boxsto1.length; r++) {
+            for (let r = 0; r < net.structure[0].length; r++) {
                 mat2[t].push([])
                 sompmat2[t].push([0, 0, 0, 0])
-                for (let k = 0; k < boxsto1[r].length; k += 1) {
+                for (let k = 0; k < pix1.data.length; k += 4) {
                     mat2[t][r].push(0)
 
                 }
             }
         }
 
-        //////console.log("Mats2")
+        console.log("Mats2")
         for (let t = 0; t < net.structure[1].length; t++) {
-            for (let r = 0; r < boxsto1.length; r++) {
-                for (let k = 0; k < boxsto1[r].length; k += 1) {
-                    mat2[t][r][k] += boxsto1[r][k] * net.structure[1][t].weights[r]
+            for (let r = 0; r < net.structure[0].length; r++) {
+                for (let k = 0; k < mat1[r].length; k += 1) {
+                    mat2[t][r][k] += mat1[r][k] * net.structure[1][t].weights[r]
                 }
             }
         }
 
-        //////console.log("Mats2Calc")
-        //         //////console.log(mat2)
+        console.log("Mats2Calc")
+        //         console.log(mat2)
 
         let maxes = []
         for (let t = 0; t < net.structure[1].length; t++) {
             maxes.push(0.01)
-            for (let r = 0; r < boxsto1.length; r++) {
-                for (let k = 0; k < boxsto1[r].length; k += 1) {
+            for (let r = 0; r < net.structure[0].length; r++) {
+                for (let k = 0; k < mat1[t].length; k++) {
                     if (Math.abs(mat2[t][r][k]) > maxes[t]) {
                         maxes[t] = Math.abs(mat2[t][r][k])
                     }
                 }
             }
         }
-        //////console.log("Maxes1")
-        //         //////console.log(mat2)
+        console.log("Maxes1")
+        //         console.log(mat2)
 
         for (let w = 0; w < net.structure[1].length; w++) {
             let outpix = canvas_context.getImageData(10000, 0, 28, 28)
@@ -1844,14 +1839,14 @@ function main() {
             for (let t = 0; t < net.structure[1].length; t++) {
                 for (let r = 0; r < net.structure[0].length; r++) {
                     for (let k = 0; k < pix1.data.length; k += 4) {
-                        box[Math.floor(k / 4)][0] -= mat2[w][r][Math.floor(k / 4)]
-                        box[Math.floor(k / 4)][1] += mat2[w][r][Math.floor(k / 4)]
+                        box[Math.floor(k / 4)][0] += mat2[w][r][Math.floor(k / 4)]
+                        box[Math.floor(k / 4)][1] -= mat2[w][r][Math.floor(k / 4)]
                         box[Math.floor(k / 4)][2] = 64
                         box[Math.floor(k / 4)][3] = 255
                     }
                 }
             }
-            //         //////console.log(box)
+            //         console.log(box)
 
 
             let bloat1 = []
@@ -1866,7 +1861,7 @@ function main() {
 
 
             let max1 = Math.max(...bloat1)
-            // //////console.log(max1)
+            // console.log(max1)
 
             for (let k = 0; k < outpix.data.length; k += 4) {
 
@@ -1878,26 +1873,24 @@ function main() {
 
 
             canvas_context.putImageData(outpix, 550 + ((w % 8) * 34) + 5, 10 + Math.floor(w / 8) * 34)
-            //////console.log("Vis2: " + w)
-            boxsto2.push(box)
+            console.log("Vis2: " + w)
         }
 
         let mat3 = []
 
 
 
-        for (let t = 0; t < net.structure[2].length; t++) {
+        for (let t = 0; t< net.structure[2].length; t++) {
             mat3.push([])
-            // for (let r = 0; r < net.structure[1].length; r++) {
-                // mat3[t].push(0)
+            for (let r = 0; r < net.structure[1].length; r++) {
+                mat3[t].push([])
                 for (let k = 0; k < pix1.data.length; k += 4) {
-                    mat3[t].push(0)
-                    // mat3[t][r].push(0)
+                    mat3[t][r].push(0)
                 }
-            // }
+            }
 
         }
-        // console.log(boxsto2)
+
         // for (let t = subcount; t < Math.min(subcount+1,64); t++) {
         //     // mat3.push([])
         //     for (let r = 0; r < net.structure[1].length; r++) {
@@ -1911,15 +1904,14 @@ function main() {
 
         for (let t = 0; t < net.structure[2].length; t++) {
             for (let q = 0; q < net.structure[1].length; q++) {
-                // for (let r = 0; r < net.structure[0].length; r++) {
-                for (let k = 0; k < pix1.data.length; k += 4) {
-                    // console.log(boxsto2[q][Math.floor(k / 4)][0],t,q,k)
-                    mat3[t][Math.floor(k/4)] += parseFloat(boxsto2[q][Math.floor(k / 4)][0] * net.structure[2][t].weights[q].valueOf())
-                } 
-                // }
-                // //////console.log("SubMats3: " + t + " , " + q) 
+                for (let r = 0; r < net.structure[0].length; r++) {
+                        for (let k = 0; k < pix1.data.length; k += 4) {
+                        mat3[t][q][Math.floor(k / 4)] += mat2[q][r][Math.floor(k/4)] * net.structure[2][t].weights[q]
+                    }
+                }
+                console.log("SubMats3: " + t + " , " + q)
             }
-            //////console.log("Mats3: " + t)
+            console.log("Mats3: " + t)
         }
 
 
@@ -1927,8 +1919,7 @@ function main() {
         // return
 
 
-        let boxsto3 =[]
-        // //////console.log(mat3)
+        // console.log(mat3)
 
         for (let q = 0; q < net.structure[2].length; q++) {
             let outpix = canvas_context.getImageData(10000, 0, 28, 28)
@@ -1938,23 +1929,25 @@ function main() {
                 box.push([0, 0, 0, 0])
             }
             // for (let w = 0; w < net.structure[2].length; w++) {
-            // for (let t = 0; t < net.structure[1].length; t++) {
-            // for (let r = 0; r < net.structure[0].length; r++) {
-            for (let k = 0; k < pix1.data.length; k += 4) {
-                box[Math.floor(k / 4)][0] += parseFloat(mat3[q][Math.floor(k / 4)])
-                box[Math.floor(k / 4)][1] -= parseFloat(mat3[q][Math.floor(k / 4)])
-                box[Math.floor(k / 4)][2] = 64
-                box[Math.floor(k / 4)][3] = 255
-            }
-            // }
-            // }
-            ////console.log(mat3)
+                for (let t = 0; t < net.structure[1].length; t++) {
+                    // for (let r = 0; r < net.structure[0].length; r++) {
+                        for (let k = 0; k < pix1.data.length; k += 4) {
+                            box[Math.floor(k / 4)][0] += parseFloat(mat3[q][t][Math.floor(k / 4)])
+                            box[Math.floor(k / 4)][1] -= mat3[q][t][Math.floor(k / 4)]
+                            box[Math.floor(k / 4)][2] = 64
+                            box[Math.floor(k / 4)][3] = 255
+                        }
+                    // }
+                }
+                        // console.log(box)
 
             // }
 
 
             let bloat1 = []
             let bloat2 = []
+            let bloat3 = []
+            let bloat4 = []
 
             for (let k = 0; k < outpix.data.length; k += 4) {
                 bloat1.push(Math.max(box[Math.floor(k / 4)][0], box[Math.floor(k / 4)][1]))
@@ -1963,8 +1956,7 @@ function main() {
 
 
             let max1 = Math.max(...bloat1)
-            ////console.log(max1)
-            ////console.log(bloat1)
+            console.log(max1)
 
             for (let k = 0; k < outpix.data.length; k += 4) {
 
@@ -1977,10 +1969,10 @@ function main() {
             // let imageData =  new ImageData(outpix.data, 28, 28);
 
             canvas_context.putImageData(outpix, 840 + ((q % 8) * 34) + 5, 10 + Math.floor(q / 8) * 34)
-            //////console.log("Vis3: " + q)
+            console.log("Vis3: " + q)
 
 
-            boxsto3.push(box)
+
         }
 
 
@@ -1988,7 +1980,9 @@ function main() {
 
 
 
-        // console.log(boxsto3)
+
+
+
 
 
 
@@ -1999,14 +1993,14 @@ function main() {
 
 
 
-        for (let t = 0; t < net.structure[3].length; t++) {
+        for (let t = 0; t< net.structure[3].length; t++) {
             mat4.push([])
-            // for (let r = 0; r < net.structure[2].length; r++) {
-                // mat4[t].push([])
+            for (let r = 0; r < net.structure[2].length; r++) {
+                mat4[t].push([])
                 for (let k = 0; k < pix1.data.length; k += 4) {
-                    mat4[t].push(0)
+                    mat4[t][r].push(0)
                 }
-            // }
+            }
 
         }
 
@@ -2023,23 +2017,22 @@ function main() {
 
         for (let t = 0; t < net.structure[3].length; t++) {
             for (let q = 0; q < net.structure[2].length; q++) {
-                // for (let r = 0; r < net.structure[1].length; r++) {
-                    for (let k = 0; k < pix1.data.length; k += 4) {
-                        console.log(boxsto3[q][Math.floor(k / 4)] )
-                        mat4[t][Math.floor(k / 4)] += boxsto3[q][Math.floor(k / 4)][0] * net.structure[3][t].weights[q]
+                for (let r = 0; r < net.structure[1].length; r++) {
+                        for (let k = 0; k < pix1.data.length; k += 4) {
+                        mat4[t][q][Math.floor(k / 4)] += mat3[q][r][Math.floor(k/4)] * net.structure[3][t].weights[q]
                     }
-                // }
-                // //////console.log("SubMats4: " + t + " , " + q)
+                }
+                console.log("SubMats4: " + t + " , " + q)
             }
-            //////console.log("Mats4: " + t)
+            console.log("Mats4: " + t)
         }
 
 
-        console.log(mat4)
+        // console.log(mat3)
         // return
 
 
-        // //////console.log(mat3)
+        // console.log(mat3)
 
         for (let q = 0; q < net.structure[3].length; q++) {
             let outpix = canvas_context.getImageData(10000, 0, 28, 28)
@@ -2049,17 +2042,17 @@ function main() {
                 box.push([0, 0, 0, 0])
             }
             // for (let w = 0; w < net.structure[2].length; w++) {
-            // for (let t = 0; t < net.structure[2].length; t++) {
-                // for (let r = 0; r < net.structure[0].length; r++) {
-                for (let k = 0; k < pix1.data.length; k += 4) {
-                    box[Math.floor(k / 4)][0] -= parseFloat(mat4[q][Math.floor(k / 4)])
-                    box[Math.floor(k / 4)][1] += mat4[q][Math.floor(k / 4)]
-                    box[Math.floor(k / 4)][2] = 64
-                    box[Math.floor(k / 4)][3] = 255
+                for (let t = 0; t < net.structure[2].length; t++) {
+                    // for (let r = 0; r < net.structure[0].length; r++) {
+                        for (let k = 0; k < pix1.data.length; k += 4) {
+                            box[Math.floor(k / 4)][0] += parseFloat(mat4[q][t][Math.floor(k / 4)])
+                            box[Math.floor(k / 4)][1] -= mat4[q][t][Math.floor(k / 4)]
+                            box[Math.floor(k / 4)][2] = 64
+                            box[Math.floor(k / 4)][3] = 255
+                        }
+                    // }
                 }
-                // }
-            // }
-            // //////console.log(box)
+                        // console.log(box)
 
             // }
 
@@ -2076,7 +2069,7 @@ function main() {
 
 
             let max1 = Math.max(...bloat1)
-            //////console.log(max1)
+            console.log(max1)
 
             for (let k = 0; k < outpix.data.length; k += 4) {
 
@@ -2089,13 +2082,13 @@ function main() {
             // let imageData =  new ImageData(outpix.data, 28, 28);
 
             canvas_context.putImageData(outpix, 1150 + ((q % 10) * 34) + 5, 10 + Math.floor(q / 10) * 34)
-
+            
             canvas_context.fillStyle = "yellow"
             canvas_context.font = "15px comic sans ms"
-            canvas_context.fillText(q, 12 + 1150 + ((q % 10) * 34) + 5, 65 + Math.floor(q / 10) * 34)
+            canvas_context.fillText(q, 12+ 1150 + ((q % 10) * 34) + 5, 65 + Math.floor(q / 10) * 34)
 
 
-            //////console.log("Vis4: " + q)
+            console.log("Vis4: " + q)
 
 
 
@@ -2103,7 +2096,6 @@ function main() {
 
 
 
-        //////console.log(mat2,mat3)
 
 
 
@@ -2111,14 +2103,12 @@ function main() {
 
 
 
-
-
-        //////console.log("complete")
+        console.log("complete")
 
         subcount++
 
 
-        if (subcount < 64) {
+        if(subcount < 64){
             // keysPressed[' '] = true
         }
 
@@ -2145,13 +2135,13 @@ function main() {
         //                 mat3[t][q][r][Math.floor(k / 4)] += mat2[t][q][r] * net.structure[2][t].weights[q]
         //             }
         //         }
-        //         //////console.log("SubMats3: " + t + " , " + q)
+        //         console.log("SubMats3: " + t + " , " + q)
         //     }
-        //     //////console.log("Mats3: " + t)
+        //     console.log("Mats3: " + t)
         // }
 
 
-        // //////console.log(mat3)
+        // console.log(mat3)
 
 
 
@@ -2186,7 +2176,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2219,7 +2209,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2252,7 +2242,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2306,7 +2296,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2339,7 +2329,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2372,7 +2362,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2410,7 +2400,7 @@ function main() {
                 vals.push(vzal)
 
             }
-            // //////console.log(vals)
+            // console.log(vals)
 
             for (let k = 0; k < pix1.data.length; k += 4) {
 
@@ -2466,7 +2456,7 @@ function main() {
     //         //     script.setAttribute("src", `fnet00${filein}.js`);
     //         // }
     //         // filein++
-    //         // //////console.log(script)  
+    //         // console.log(script)  
     //         // document.getElementsByTagName("head")[0].appendChild(script);
     //         // net.becomeNetworkFrom(network)
     //         count = 0
@@ -2742,15 +2732,15 @@ function main() {
             }
             if (Math.random() < .01) {
 
-                // //////console.log(i,  count%62)
+                // console.log(i,  count%62)
             }
             if (i == count % 62) {
-                // //////console.log("f")
+                // console.log("f")
                 roveacc++
                 acc++
             }
             if (keysPressed['q'] || count % (62 * 300) == 0) {
-                //////console.log(samp, "Big error: " + (diff / samp), "Moving error: " + (rovediff / samp2), "Big Average: " + (acc / samp), "Moving Average: " + (roveacc / samp2), mobe)
+                console.log(samp, "Big error: " + (diff / samp), "Moving error: " + (rovediff / samp2), "Big Average: " + (acc / samp), "Moving Average: " + (roveacc / samp2), mobe)
 
                 rovediff = 0
                 roveacc = 0
